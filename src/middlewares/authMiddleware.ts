@@ -12,12 +12,14 @@ export const authenticateToken = (req: AuthenticatedRequest, res: Response, next
   const token = authHeader && authHeader.split(' ')[1]; 
 
   if (!token) {
-    return res.status(401).json({ message: 'Unauthorized' });
+    res.status(401).json({ message: 'Unauthorized' });
+    return;
   }
 
   jwt.verify(token, JWT_SECRET, (err, user: any) => {
     if (err) {
-      return res.status(403).json({ message: 'Forbidden' });
+      res.status(403).json({ message: 'Forbidden' });
+      return;
     }
     req.userId = user.userId;
     next();

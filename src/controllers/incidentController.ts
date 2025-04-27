@@ -16,7 +16,8 @@ export const getIncidentById = async (req: Request, res: Response, next: NextFun
     const id = parseInt(req.params.id);
     const incident = await IncidentService.getById(id);
     if (!incident) {
-      return res.status(404).json({ message: 'Incident not found' });
+       res.status(404).json({ message: 'Incident not found' });
+       return;
     }
     res.json(incident);
   } catch (err) {
@@ -28,7 +29,8 @@ export const createIncident = async (req: Request, res: Response, next: NextFunc
   try {
     const { error } = validateIncidentInput(req.body);
     if (error) {
-      return res.status(400).json({ message: error });
+      res.status(400).json({ message: error });
+      return;
     }
     const newIncident = await IncidentService.create(req.body);
     res.status(201).json(newIncident);
@@ -42,7 +44,8 @@ export const deleteIncident = async (req: Request, res: Response, next: NextFunc
     const id = parseInt(req.params.id);
     const deleted = await IncidentService.deleteById(id);
     if (!deleted) {
-      return res.status(404).json({ message: 'Incident not found' });
+      res.status(404).json({ message: 'Incident not found' });
+      return;
     }
     res.status(204).send();
   } catch (err) {

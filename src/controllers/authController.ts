@@ -6,16 +6,19 @@ import prisma  from '../utils/prismaClient';
 
 const JWT_SECRET = process.env.JWT_SECRET || "supersecret"; 
 
+
 export const register = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(400).json({ message: "Email and password are required" });
+    res.status(400).json({ message: "Email and password are required" });
+    return;
   }
 
   const existingUser = await prisma.user.findUnique({ where: { email } });
   if (existingUser) {
-    return res.status(400).json({ message: "User already exists" });
+    res.status(400).json({ message: "User already exists" });
+    return;
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -36,13 +39,15 @@ export const login = async (req: Request, res: Response) => {
   const user = await prisma.user.findUnique({ where: { email } });
 
   if (!user) {
-    return res.status(400).json({ message: "Invalid credentials" });
+    res.status(400).json({ message: "Invalid credentials" });
+    return;
   }
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
 
   if (!isPasswordValid) {
-    return res.status(400).json({ message: "Invalid credentials" });
+    res.status(400).json({ message: "Invalid credentials" });
+    return;
   }
 
   const token = jwt.sign(
